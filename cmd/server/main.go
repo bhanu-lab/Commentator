@@ -1,10 +1,11 @@
 package main
 
 import (
-	"Commentator/core/database"
-	"Commentator/core/transport"
 	"fmt"
 	"net/http"
+
+	"github.com/bhanu-lab/Commentator/core/database"
+	"github.com/bhanu-lab/Commentator/core/transport"
 )
 
 type App struct{}

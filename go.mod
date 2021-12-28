@@ -1,4 +1,4 @@
-module Commentator
+module github.com/bhanu-lab/Commentator
 
 go 1.17
 
