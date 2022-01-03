@@ -37,7 +37,7 @@ type CommentService interface {
 }
 
 //GetComment - retrieves comment from the ID given
-func (s *Service) GetComment(ID uint) (Comment, error) {
+func (s *Service) GetComment(ID int) (Comment, error) {
 	var comment Comment
 	if res := s.DB.First(&comment, ID); res.Error != nil {
 		return Comment{}, res.Error
@@ -63,7 +63,7 @@ func (s *Service) PostComment(comment Comment) (bool, error) {
 }
 
 //UpdateComment - updates comment for the ID given
-func (s *Service) UpdateComment(ID uint, newcomment Comment) (Comment, error) {
+func (s *Service) UpdateComment(ID int, newcomment Comment) (Comment, error) {
 	var comment Comment
 	if res := s.DB.Find(&comment, ID); res.Error != nil {
 		return Comment{}, res.Error
@@ -76,7 +76,7 @@ func (s *Service) UpdateComment(ID uint, newcomment Comment) (Comment, error) {
 }
 
 //DeleteComment - deletes comment based on ID given
-func (s *Service) DeleteComment(ID uint) error {
+func (s *Service) DeleteComment(ID int) error {
 	if res := s.DB.Delete(&Comment{}, ID); res.Error != nil {
 		return res.Error
 	}

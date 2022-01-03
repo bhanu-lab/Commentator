@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/bhanu-lab/Commentator/core/comment"
 	"github.com/bhanu-lab/Commentator/core/database"
 	"github.com/bhanu-lab/Commentator/core/transport"
 )
@@ -16,16 +17,20 @@ Run - Prepares all needed for starting service
 func (a *App) Run() error {
 	fmt.Println("Preparing Application....")
 
-	var err error
-	_, err = database.NewDataBaseConnection()
+	db, err := database.NewDataBaseConnection()
 	if err != nil {
 		fmt.Println("Failed creating new DB connection")
 		return err
 	}
-
 	fmt.Println("[Ok]   Database connection successful")
+	err = database.MigrateDB(db)
+	if err != nil {
+		return err
+	}
+	fmt.Println("[Ok]   Databse Migration successful")
 
-	h := transport.NewHandler()
+	service := comment.NewService(db)
+	h := transport.NewHandler(service)
 	h.SetupRoutes()
 	fmt.Println("[Ok]   Settingup Routes successful")
 
