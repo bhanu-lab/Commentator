@@ -6,8 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bhanu-lab/Commentator/core/comment"
 	"github.com/gorilla/mux"
+
+	"github.com/bhanu-lab/Commentator/core/comment"
 )
 
 type Handler struct {
@@ -32,8 +33,8 @@ func (h *Handler) SetupRoutes() {
 	h.Router.HandleFunc("/api/comment/{id}", h.GetComment).Methods("GET")
 	h.Router.HandleFunc("/api/comments", h.GetAllComments).Methods("GET")
 	h.Router.HandleFunc("/api/{author}/{slug}/{body}", h.PostComment).Methods("POST")
-	h.Router.HandleFunc("/api/comment/{id}/{body}", h.UpdateComment).Methods("PUT")
-	h.Router.HandleFunc("/api/comment/{id}", h.DeleteComment).Methods("DELETE")
+	h.Router.HandleFunc("/api/update/comment/{id}/{body}", h.UpdateComment).Methods("PUT")
+	h.Router.HandleFunc("/api/delete/comment/{id}", h.DeleteComment).Methods("DELETE")
 
 }
 
@@ -88,16 +89,12 @@ func (h *Handler) PostComment(w http.ResponseWriter, r *http.Request) {
 		Created: time.Now(),
 	}
 
-	ok, err := h.Service.PostComment(comment)
+	comment, err := h.Service.PostComment(comment)
 	if err != nil {
 		fmt.Fprint(w, "error while writing comment to DB")
 	}
 
-	if ok {
-		fmt.Fprintf(w, "ok")
-	} else {
-		fmt.Fprintf(w, "Failed internal error")
-	}
+	fmt.Fprintf(w, "%+v", comment)
 
 }
 
@@ -109,15 +106,16 @@ func (h *Handler) UpdateComment(w http.ResponseWriter, r *http.Request) {
 	id, err := GetID(w, vars)
 	body := vars["body"]
 
-	comment, err := h.Service.GetComment(id)
-	if err == nil {
-		fmt.Fprintf(w, "error while getting comment")
-	}
-	comment.Body = body
-
-	c, err := h.Service.UpdateComment(id, comment)
+	comm, err := h.Service.GetComment(id)
 	if err != nil {
-		fmt.Fprintf(w, "failed updating comment for if %d", id)
+		fmt.Fprintf(w, "error while getting comm")
+		return
+	}
+	comm.Body = body
+
+	c, err := h.Service.UpdateComment(id, comm)
+	if err != nil {
+		fmt.Fprintf(w, "failed updating comm for if %d", id)
 	}
 
 	fmt.Fprintf(w, "%+v", c)

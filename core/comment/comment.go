@@ -55,11 +55,11 @@ func (s *Service) GetAllComments() ([]Comment, error) {
 }
 
 //PostComment - adds new comment
-func (s *Service) PostComment(comment Comment) (bool, error) {
+func (s *Service) PostComment(comment Comment) (Comment, error) {
 	if res := s.DB.Save(&comment); res.Error != nil {
-		return false, res.Error
+		return Comment{}, res.Error
 	}
-	return true, nil
+	return comment, nil
 }
 
 //UpdateComment - updates comment for the ID given
