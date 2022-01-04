@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -14,6 +15,10 @@ import (
 type Handler struct {
 	Router  *mux.Router
 	Service *comment.Service
+}
+
+type Response struct {
+	Message string
 }
 
 // NewHandler -returns pointer to Handler
@@ -42,7 +47,10 @@ func (h *Handler) SetupRoutes() {
 HealthCheck - deals with /health/check API
 */
 func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "I am alive!! \n")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(Response{"I am alive"}); err != nil {
+		panic(err)
+	}
 }
 
 /*
